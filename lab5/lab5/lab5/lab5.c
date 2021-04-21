@@ -117,8 +117,7 @@ int main()
 	List list = { NULL,NULL,0};
 	pushback(&list, 3);
 	pushback(&list, 0);
-	Calculate(&list,10000);
+	Calculate(&list,100);
 	printNorm(list);
 	clear(&list);
-	//Node* p = list.top->pPrev;
 }

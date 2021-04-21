@@ -48,19 +48,6 @@ void inverseMatrix(float** mainMatrix, int size, float** matrixY,float ** invers
 		  }
 	  }
 	}
-	/*
-	printf("\n\n");
-	for (int i = 0; i < size; i++)
-	{
-		for (int j = 0; j < size; j++)
-		{
-			printf("%f ", *(*(newMatrix + i) + j));
-		}
-		printf("\n");
-	}
-	*/
-
-
 	int k = 0, kNew = 0;;
 	int nomer = 0;
 	int column = 0;
@@ -70,11 +57,7 @@ void inverseMatrix(float** mainMatrix, int size, float** matrixY,float ** invers
 		for (int i = 0; i < size; i++)
 		{
 			*(res + i) = *(*(matrixY + i) + column) / (*(*(mainMatrix + i) + i));
-			//printf("\n\n");
-		    //printf("%f\t", *(res + i));
-			//printf("%f\t", *(matrixY + i));
 		}
-		//int o = 0;
 		while (1)
 		{
 
@@ -86,12 +69,6 @@ void inverseMatrix(float** mainMatrix, int size, float** matrixY,float ** invers
 					*(Xn + i) = *(Xn + i)+ *(*(newMatrix + i) + j) * (*(res + j));
 				}
 			}
-			//printf("\n\n");
-			//for (int i = 0; i < size; i++) 
-			//{
-			//	printf("%f", *(Xn + i));
-			//}
-
 			for (int i = 0; i < size; i++)
 			{
 				if (fabs(*(Xn + i) - *(res + i)) < epsilon)
@@ -112,13 +89,6 @@ void inverseMatrix(float** mainMatrix, int size, float** matrixY,float ** invers
 				{
 					*(*(inverseMatrix + i) + kNew) = *(Xn + i);
 				}
-				/*
-				printf("\n\n");
-				for (int i = 0; i < size; i++)
-				{
-					printf("%f\t", *(Xn + i));
-				}
-				*/
 				kNew = k;
 				break;
 			}
@@ -146,15 +116,15 @@ void inverseMatrix(float** mainMatrix, int size, float** matrixY,float ** invers
 			break;
 		}
 	}
-	/*
+	
 	free(res);
 	free(Xn);
 	for (int i = 0; i < size; i++)
 	{
-		free(newMatrix + i);
+		free(newMatrix[i]);
 	}
 	free(newMatrix);
-	*/
+	
 }
 
 int main()
@@ -210,30 +180,19 @@ int main()
 		}
 		printf("\n");
 	}
-/*
-	printf("\n\n");
-	
-	for (int i = 0; i < n; i++)
-	{
-		for (int j = 0; j < n; j++)
-		{
-			printf("%f ", *(*(matrixY + i) + j));
-		}
-		printf("\n");
-	}
-	*/
+
 	inverseMatrix(mainMatrix, n, matrixY, inverseMat);
-	/*
+	
 	for (int i = 0; i < n; i++) 
 	{
-		free(mainMatrix + i);
-		free(matrixY + i);
-		free(inverseMat + i);
+		free(mainMatrix[i]);
+		free(matrixY[i]);
+		free(inverseMat[i]);
 
 	}
 	free(mainMatrix);
 	free(matrixY);
 	free(inverseMat);
-	*/
+	
 
 }

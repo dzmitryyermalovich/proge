@@ -4,8 +4,6 @@
 #include<string.h>
 int main()
 {
-    //char str1[100];
-    //char str2[100];
     char cheak[100];
     while (1) 
     {
