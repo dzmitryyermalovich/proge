@@ -6,7 +6,7 @@
 #include<malloc.h>
 
 typedef struct node{
-	int accountNumber;
+	int accountNumber; 
 	char typeOfCapitalization[20];
 	char typeOfContribution[20];
 	char passportData[20];
@@ -486,7 +486,7 @@ void rewind() {
 void menu() {
 	rewind();
 	printf("Menu card :\n");
-	printf("1)Information about contributors\n2)Operations\n3)Reports\n4)Edit\n");
+	printf("1)Information about contributors\n2)Operations\n3)Reports\n4)Edit\n5)Exit\n");
 }
 
 void operation() {
@@ -542,7 +542,7 @@ void removeNode(InformationAboutContributors* users, int key) {
 
 int cheakContriburion1(char str[]) {
 	int c = 0;
-	if ((strcmp(str, "saving") == 0)|| (strcmp(str, "cumulative") == 0)) {
+	if ((strcmp(str, "savings") == 0)|| (strcmp(str, "cumulative") == 0)) {
 		return 1;
 	}
 	else {
@@ -550,7 +550,7 @@ int cheakContriburion1(char str[]) {
 	}
 }
 
-void cheakContriburion2(char str[]) {
+int cheakContriburion2(char str[]) {
 	int c = 0;
 	if ((strcmp(str, "withC") == 0) || (strcmp(str, "withoutC") == 0)) {
 		return 1;
@@ -560,23 +560,70 @@ void cheakContriburion2(char str[]) {
 	}
 }
 
-void cheakData(char str[]) {
-//? ???? ????????? ?? ??????? Ascii
+int cheakData(char str[]) {
+
+	int deltaDay, deltaMonth, deltaYear;
+	int k = 0;
+	if (strlen(str) < 8) {
+		return 0;
+	}
+	for (int i = 0; i < 8; i++) {
+		if (i < 2) {
+			if ((int)str[i] > 57 || (int)str[i] < 48) {
+				return 0;
+			}
+		}
+		else if (i < 5 && i>2) {
+			if ((int)str[i] > 57 || (int)str[i] < 48) {
+				return 0;
+			}
+		}
+		else if (i < 8 && i>5) {
+			if ((int)str[i] > 57 || (int)str[i] < 48) {
+				return 0;
+			}
+		}
+		else {
+			char buf[10];
+			strcpy(buf, ".");
+			if (strcmp(buf, ".") != 0) {
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+
+int cheakNumber(char str[]) {
+	
+	for (int i = 0; i < strlen(str); i++) {
+		if ((int)str[i] > 57 || (int)str[i] < 48) {
+			return 0;
+		}
+	}
+	
+	return 1;
 }
 
 int main()
 { 	
-
 	InformationAboutContributors users = { NULL,NULL };
 	FILE* fp;
+	FILE* fwr;
+	int k=1;
+	int kof = 1;
 	char str[255];
 	char s[255];
+	char fullStr[255];
+	char convStr[255];
 	char* next = 0;
 	fp = fopen("C:\\Education\\IT\\C\\lab7.txt", "r");
+	fwr = fopen("C:\\Education\\IT\\C\\output.txt", "w");
 	int c = 0;
 	char inputStr[255];
 	int buf1=0;
 	char buf2[255];
+	Node* currant1;
 	while (!feof(fp))
 	{
 
@@ -611,7 +658,6 @@ int main()
 		c = 0;
 		pushBack(&users,&currant);
 	}
-
 	int button;
 	int button2;
 	int button3;
@@ -760,6 +806,7 @@ int main()
 			while (1)
 			{
 				edit();
+				kof = 1;
 				printf("Enter button = ");
 				scanf("%d", &button2);
 				switch (button2)
@@ -774,34 +821,60 @@ int main()
 						switch (c)
 						{
 						case 0:
+							k = cheakNumber(s2);
+							if (k == 0) {
+								kof = 0;
+							}
 							currant.accountNumber = atoi(s2);
 							break;
 						case 1:
+							k = cheakContriburion2(s2);
+							if (k == 0) {
+								kof = 0;
+							}
 							strcat(currant.typeOfCapitalization, s2);
 							break;
 						case 2:
+							k = cheakContriburion1(s2);
+							if (k == 0) {
+								kof = 0;
+							}
 							strcat(currant.typeOfContribution, s2);
 							break;
 						case 3:
 							strcat(currant.passportData, s2);
 							break;
 						case 4:
+							k = cheakNumber(s2);
+							if (k == 0) {
+								kof = 0;
+							}
 							currant.currentDepositAmount = atoi(s2);
 							break;
 						case 5:
+							k=cheakData(s2);
+							if (k == 0) {
+								kof = 0;
+							}
 							strcat(currant.lastOperationWithAcoount, s2);
 							break;
 						}
 
 						c++;
 					} while (s2 = strtok_s(0, ",", &next2));
-					c = 0;
-					Node * cheak=findLateNode(&users, currant.accountNumber);
-					if (cheak == NULL) {
-						pushBack(&users, &currant);
+					if (kof != 0) {
+						c = 0;
+						Node* cheak = findLateNode(&users, currant.accountNumber);
+						if (cheak == NULL) {
+							pushBack(&users, &currant);
+						}
+						else {
+							printf("We have this person \n");
+						}
 					}
-					else {
-						printf("We have this person");
+					else
+					{
+						printf("Isnt correct input \n");
 					}
 					break;
 				case 2:
@@ -833,15 +906,27 @@ int main()
 						{
 						case 1:
 							scanf(" %s", &buf2);
+							k=cheakContriburion2(buf2);
+							if (k == 0) {
+								kof = 0;
+							}
 							strcpy(currant.typeOfCapitalization, buf2);
 							break;
 						case 2:
 							scanf(" %s", &buf2);
+							k=cheakContriburion1(buf2);
+							if (k == 0) {
+								kof = 0;
+							}
 							strcpy(currant.typeOfContribution, buf2);
 							break;
 						case 3:
-							scanf("%d", &buf1);
-							currant.currentDepositAmount = buf1;
+							scanf("%d", &buf2);
+							k = cheakNumber(buf2);
+							if (k == 0) {
+								kof = 0;
+							}
+							currant.currentDepositAmount = atoi(buf2);
 							break;
 						case 4:
 							scanf("%s", &buf2);
@@ -851,18 +936,23 @@ int main()
 							printf("Cheak input\n");
 							break;
 						}
-						if (dataFormat(&currant) != dataFormat(p)) {
-							pushBack(&users, &currant);
+						if (kof != 0) {
+							if (dataFormat(&currant) != dataFormat(p)) {
+								pushBack(&users, &currant);
+							}
+							else {
+								p->currentDepositAmount = currant.currentDepositAmount;
+								strcpy(p->passportData, currant.passportData);
+								strcpy(p->typeOfCapitalization, currant.typeOfCapitalization);
+								strcpy(p->typeOfContribution, currant.typeOfContribution);
+							}
 						}
 						else {
-							p->currentDepositAmount= currant.currentDepositAmount;
-							strcpy(p->passportData,currant.passportData);
-							strcpy(p->typeOfCapitalization,currant.typeOfCapitalization);
-							strcpy(p->typeOfContribution,currant.typeOfContribution);
+							printf("Isnt correct input\n");
 						}
 					}
 					else {
-						printf("NotFind key");
+						printf("NotFind key\n");
 					}
 					
 					break;
@@ -872,7 +962,7 @@ int main()
 					break;
 				default:
 				
-                	printf("Cheak input");
+                	printf("Cheak input\n");
 				}
 				if (ex == 1) {
 					break;
@@ -880,12 +970,37 @@ int main()
 				scanf(" %s", &q);
 			}
 			break;
+		case 5:
+			currant1 = users.head;
+			while (currant1!=NULL)
+			{
+				strcpy(fullStr, "");
+				strcpy(convStr, "");
+				_itoa(currant1->accountNumber, convStr, 10);
+				strcat(fullStr, convStr);
+				strcat(fullStr,"  ");
+				strcat(fullStr, currant1->typeOfCapitalization);
+				strcat(fullStr, "  ");
+				strcat(fullStr, currant1->typeOfContribution);
+				strcat(fullStr, "  ");
+				strcat(fullStr, currant1->passportData);
+				strcat(fullStr, "  ");
+				strcpy(convStr, "");
+				_itoa(currant1->currentDepositAmount, convStr, 10);
+				strcat(fullStr, convStr);
+				strcat(fullStr, "  ");
+				strcat(fullStr, currant1->lastOperationWithAcoount);
+				fprintf(fwr, fullStr);
+				fprintf(fwr, "\n");
+				currant1 = currant1->pNext;
+			}
+			fclose(fwr);
+			fclose(fp);
+			exit(0);
 		default:
 			printf("Cheak input");
 		}
 
 	}
-
-	fclose(fp);
 	return 0;
 }
