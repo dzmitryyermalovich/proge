@@ -192,13 +192,18 @@ void printInfoCurrant(Node* user) {
 }
 
 void printTable(InformationAboutContributors *users) {
-	Node* currant = users->head;
-	while (currant->pNext!=NULL)
-	{
+	if (users->head != NULL) {
+		Node* currant = users->head;
+		while (currant->pNext != NULL)
+		{
+			printInfoCurrant(currant);
+			currant = currant->pNext;
+		}
 		printInfoCurrant(currant);
-		currant = currant->pNext;
 	}
-	printInfoCurrant(currant);
+	else {
+		printf("\nYour table is empty\n");
+	}
 }
 
 void pushBack(InformationAboutContributors* users,Node* node) {
@@ -517,26 +522,35 @@ void removeNode(InformationAboutContributors* users, int key) {
 	Node* currant = users->head;
 	Node* prev = NULL;
 	while (currant->pNext != NULL) {
-		if ((currant->accountNumber == key)&&(currant== users->head)) {
-			currant->pNext->pPrev = users->head;
+		if ((currant->accountNumber == key)&&(currant==users->head)) {
+			currant->pNext->pPrev = NULL;
 			users->head = currant->pNext;
+			free(currant);
 			currant = users->head;
 		}
 		else if ((currant->accountNumber == key) && (currant == users->top)) {
 			users->top->pPrev->pNext = NULL;
+			users->top = users->top->pPrev;
+			free(currant);
 			currant = users->head;
 		}
 		else if ((currant->accountNumber == key) && (currant != users->head) && (currant != users->top)) {
 			currant->pNext->pPrev = currant->pPrev;
 			currant->pPrev->pNext = currant->pNext;
+			free(currant);
 			currant = users->head;
 		}
 		else {
 			currant = currant->pNext;
 		}
 	}
-	if ((currant->accountNumber == key) && (currant == users->top)) {
+	if ((currant->accountNumber == key) && (currant == users->top) && (currant == users->head)) {
+		users->head = NULL;
+		users->top = NULL;
+	}
+	if ((currant->accountNumber == key) && (currant == users->top)&& (currant != users->head)) {
 		users->top->pPrev->pNext = NULL;
+		users->top = users->top->pPrev;
 	}
 }
 
@@ -584,9 +598,7 @@ int cheakData(char str[]) {
 			}
 		}
 		else {
-			char buf[10];
-			strcpy(buf, ".");
-			if (strcmp(buf, ".") != 0) {
+			if ((int)str[i] != 46) {
 				return 0;
 			}
 		}
@@ -874,6 +886,7 @@ int main()
 					}
 					else
 					{
+						c = 0;
 						printf("Isnt correct input \n");
 					}
 					break;
@@ -921,7 +934,7 @@ int main()
 							strcpy(currant.typeOfContribution, buf2);
 							break;
 						case 3:
-							scanf("%d", &buf2);
+							scanf(" %s", &buf2);
 							k = cheakNumber(buf2);
 							if (k == 0) {
 								kof = 0;
